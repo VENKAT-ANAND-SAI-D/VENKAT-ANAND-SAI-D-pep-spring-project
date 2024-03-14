@@ -18,7 +18,7 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    public Optional<Account> registerAccount(Account account){
+    public Optional<?> registerAccount(Account account){
         if (account.getUsername().isBlank() != true && account.getPassword().length() >= 4){
             Optional<Account> accountOptional = accountRepository.findByUsername(account.getUsername());
             if (accountOptional.isEmpty()){
@@ -27,7 +27,7 @@ public class AccountService {
                 return registeredAccount;
             }
             else {
-                return Optional.empty();
+                return Optional.of(-1);
             }
         }
         return Optional.empty();

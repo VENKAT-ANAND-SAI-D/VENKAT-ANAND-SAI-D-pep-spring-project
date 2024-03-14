@@ -42,12 +42,16 @@ public class SocialMediaController {
 
     @PostMapping("/register")
     public @ResponseBody ResponseEntity<Account> registerAccount(@RequestBody Account account){
-        Optional<Account> accountOptional = accountService.registerAccount(account);
-        if (accountOptional.isPresent()){
-            return ResponseEntity.status(200).body(accountOptional.get());
+        Optional<?> accountOptional = accountService.registerAccount(account);
+        if (accountOptional.isPresent() && accountOptional.get().getClass() == Account.class){
+            Account registeredAccount = (Account) accountOptional.get();
+            return ResponseEntity.status(200).body(registeredAccount);
+        }
+        else if (accountOptional.isPresent() && accountOptional.get().getClass() != Account.class){
+            return ResponseEntity.status(409).build();
         }
         else {
-            return ResponseEntity.status(400).build();
+        return ResponseEntity.status(400).build();
         }
     }
 
@@ -78,18 +82,24 @@ public class SocialMediaController {
     @GetMapping("/messages/{message_id}")
     public @ResponseBody ResponseEntity<Message> getMessageById(@PathVariable Integer message_id){
         Optional<Message> message = messageService.findMessageById(message_id);
-        return ResponseEntity.status(200).body(message.get());
+        if (message.isPresent()){
+            return ResponseEntity.status(200).body(message.get());
+        }
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/messages/{message_id}")
     public @ResponseBody ResponseEntity<Integer> deleteMessageById(@PathVariable Integer message_id){
-        Optional<Integer> rowsAffected = messageService.deleteMessageById(message_id);
-        return ResponseEntity.status(200).body(rowsAffected.get());
+        Integer rowsAffected = messageService.deleteMessageById(message_id);
+        if (rowsAffected != 0){
+            return ResponseEntity.status(200).body(rowsAffected);
+        }
+        return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/messages/{message_id}")
-    public @ResponseBody ResponseEntity<Integer> updateMessageById(@PathVariable Integer message_id, @RequestParam String message_text){
-        Integer rowsAffected = messageService.updateMessage(message_id, message_text);
+    public @ResponseBody ResponseEntity<Integer> updateMessageById(@PathVariable Integer message_id, @RequestBody Message message){
+        Integer rowsAffected = messageService.updateMessage(message_id, message);
         if (rowsAffected != 0){
             return ResponseEntity.status(200).body(rowsAffected);
         }

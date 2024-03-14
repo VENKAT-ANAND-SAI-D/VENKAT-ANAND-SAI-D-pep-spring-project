@@ -43,24 +43,22 @@ public class MessageService {
         return message;
     }
 
-    public Optional<Integer> deleteMessageById(Integer id){
+    public Integer deleteMessageById(Integer id){
         Optional<Message> messageOptional = messageRepository.findById(id);
         if (messageOptional.isPresent()){
             messageRepository.deleteById(id);
-            Optional<Integer> rowsAffected = Optional.ofNullable(1);
-            return rowsAffected;
+            return 1;
         }
-        Optional<Integer> rowsAffected = Optional.ofNullable(null);
-        return rowsAffected;
+        return 0;
     }
 
-    public Integer updateMessage(Integer id, String message_text){
-        if (message_text.isBlank() == false && message_text.length() <= 255){
+    public Integer updateMessage(Integer id, Message message){
+        if (message.getMessage_text().isBlank() == false && message.getMessage_text().length() <= 255){
             Optional<Message> messageOptional = messageRepository.findById(id);
             if (messageOptional.isPresent()){
-                Message message = messageOptional.get();
-                message.setMessage_text(message_text);
-                messageRepository.save(message);
+                Message updatedMessage = messageOptional.get();
+                updatedMessage.setMessage_text(message.getMessage_text());
+                messageRepository.save(updatedMessage);
                 return 1;
             }
         }
