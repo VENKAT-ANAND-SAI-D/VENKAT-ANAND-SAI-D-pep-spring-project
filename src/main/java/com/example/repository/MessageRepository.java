@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.entity.Message;
@@ -11,8 +13,10 @@ import com.example.entity.Message;
 @Repository
 public interface MessageRepository extends JpaRepository <Message, Integer>{
 
-    public Optional<Message> findByMessage_text(String message_text);
+    @Query("SELECT m FROM Message m WHERE m.message_text = :messageText")
+    public Optional<Message> findByMessageText(@Param("messageText") String messageText);
 
-    public List<Message> findAllByPosted_by(Integer posted_by);
+    @Query("SELECT m FROM Message m WHERE m.posted_by = :postedBy")
+    public List<Message> findAllByPostedBy(@Param("postedBy") Integer postedBy);
 
 }

@@ -27,10 +27,10 @@ public class AccountService {
                 return registeredAccount;
             }
             else {
-                return null;
+                return Optional.empty();
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     public Optional<Account> loginAccount(Account account){
@@ -41,7 +41,7 @@ public class AccountService {
                 return accountOptional;
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     public boolean findById(Integer id){

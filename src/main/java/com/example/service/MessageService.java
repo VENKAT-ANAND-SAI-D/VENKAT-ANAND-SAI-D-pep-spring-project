@@ -26,11 +26,11 @@ public class MessageService {
         if (message.getMessage_text().isBlank() == false && message.getMessage_text().length() <= 255){
             if (accountService.findById(message.getPosted_by())){
                 messageRepository.save(message);
-                Optional<Message> messageOptional = messageRepository.findByMessage_text(message.getMessage_text());
+                Optional<Message> messageOptional = messageRepository.findByMessageText(message.getMessage_text());
                 return messageOptional;
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     public List<Message> getAllMessages(){
@@ -38,22 +38,24 @@ public class MessageService {
         return messages;
     }
 
-    public Message findMessageById(Integer id){
-        Message message = messageRepository.findById(id).get();
+    public Optional<Message> findMessageById(Integer id){
+        Optional<Message> message = messageRepository.findById(id);
         return message;
     }
 
-    public Integer deleteMessageById(Integer id){
+    public Optional<Integer> deleteMessageById(Integer id){
         Optional<Message> messageOptional = messageRepository.findById(id);
-        messageRepository.deleteById(id);
         if (messageOptional.isPresent()){
-            return 1;
+            messageRepository.deleteById(id);
+            Optional<Integer> rowsAffected = Optional.ofNullable(1);
+            return rowsAffected;
         }
-        return null;
+        Optional<Integer> rowsAffected = Optional.ofNullable(null);
+        return rowsAffected;
     }
 
     public Integer updateMessage(Integer id, String message_text){
-        if (message_text.isBlank() != false && message_text.length() <= 255){
+        if (message_text.isBlank() == false && message_text.length() <= 255){
             Optional<Message> messageOptional = messageRepository.findById(id);
             if (messageOptional.isPresent()){
                 Message message = messageOptional.get();
@@ -62,11 +64,11 @@ public class MessageService {
                 return 1;
             }
         }
-        return null;
+        return 0;
     }
 
     public List<Message> getMessagesById(Integer posted_by){
-        List<Message> messages = messageRepository.findAllByPosted_by(posted_by);
+        List<Message> messages = messageRepository.findAllByPostedBy(posted_by);
         return messages;
     }
 }
